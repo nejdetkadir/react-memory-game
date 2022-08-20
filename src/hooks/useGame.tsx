@@ -1,7 +1,15 @@
 import React, { useState, useContext, createContext, useEffect } from 'react';
 import { GameStateEnum, CardType } from './../types';
-import { cards } from "./../data"
+import { cards } from "./../data";
 import { shuffleCards, shuffleCardsWithSlice } from './../utils';
+import {
+  GAME_SETTINGS,
+  GAME_STATE,
+  GAME_SCORE,
+  TOUCHED_CARDS,
+  MATCHED_CARDS,
+  GAME_CARDS
+} from "./../constants";
 
 type GameProviderType = {
   children: React.ReactNode;
@@ -21,30 +29,24 @@ type UseGameType = {
 }
 
 type GameSettingsType = {
-  verticalCardCount: number;
-  horizontalCardCount: number;
+  verticalCardsCount: number;
+  horizontalCardsCount: number;
 }
 
 const GameContext = createContext({} as UseGameType);
-const initialGameSettings = { verticalCardCount: 8, horizontalCardCount: 8 } as GameSettingsType;
-const initialGameState = GameStateEnum.NOT_STARTED;
-const initialGameScore = 0;
-const defaultSuccessScore = 10;
-const defaultFailureScore = -5;
-const defaultClearTouchedCardsTimeout = 1000;
 
 export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
-  const [gameSettings, setGameSettings] = useState<GameSettingsType>(initialGameSettings);
-  const [gameState, setGameState] = useState<GameStateEnum>(initialGameState);
-  const [gameScore, setGameScore] = useState<number>(initialGameScore);
-  const [touchedCards, setTouchedCards] = useState<CardType[]>([]);
-  const [matchedCards, setMatchedCards] = useState<CardType[]>([]);
-  const [gameCards, setGameCards] = useState<CardType[]>([]);
+  const [gameSettings, setGameSettings] = useState<GameSettingsType>(GAME_SETTINGS.INITIAL);
+  const [gameState, setGameState] = useState<GameStateEnum>(GAME_STATE.INITIAL);
+  const [gameScore, setGameScore] = useState<number>(GAME_SCORE.INITIAL);
+  const [touchedCards, setTouchedCards] = useState<CardType[]>(TOUCHED_CARDS.INITIAL);
+  const [matchedCards, setMatchedCards] = useState<CardType[]>(MATCHED_CARDS.INITIAL);
+  const [gameCards, setGameCards] = useState<CardType[]>(GAME_CARDS.INITIAL);
 
   useEffect(() => {
     if (matchedCards.length === gameCards.length && gameCards.length > 0) {
       setGameState(GameStateEnum.FINISHED);
-      setGameScore(initialGameScore);
+      setGameScore(GAME_SCORE.INITIAL);
       setTouchedCards([]);
       setMatchedCards([]);
     }
@@ -52,7 +54,7 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
 
   const startGame = () => {
     setGameState(GameStateEnum.PLAYING);
-    const totalCards = (gameSettings.verticalCardCount * gameSettings.horizontalCardCount) / 2;
+    const totalCards = (gameSettings.verticalCardsCount * gameSettings.horizontalCardsCount) / 2;
     let shuffledCards = shuffleCardsWithSlice(cards, totalCards);
     shuffledCards = shuffleCards([...shuffledCards, ...shuffledCards]);
     setGameCards(shuffledCards);
@@ -84,15 +86,15 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
   const clearTouchedCards = () => {
     setTimeout(() => {
       setTouchedCards([]);
-    }, defaultClearTouchedCardsTimeout);
+    }, TOUCHED_CARDS.CLEAR_TIMEOUT);
   }
 
   const addScore = () => {
-    setGameScore(gameScore + defaultSuccessScore);
+    setGameScore(gameScore + GAME_SCORE.PER_SUCCESSFUL_MATCH);
   }
 
   const subtractScore = () => {
-    setGameScore(gameScore - defaultFailureScore);
+    setGameScore(gameScore - GAME_SCORE.PER_FAILED_MATCH);
   }
 
   const contextValue = {
