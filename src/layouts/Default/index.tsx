@@ -6,7 +6,7 @@ type Props = {
 
 const Default: React.FC<Props> = ({ children }) => {
   return (
-    <div>
+    <div className='grid place-items-center h-screen'>
       {children}
     </div>
   )

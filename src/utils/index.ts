@@ -1,10 +1,13 @@
 import { CardType } from './../types';
 
-const shuffleCards = (cards: CardType[], total: number) => {
+const shuffleCardsWithSlice = (cards: CardType[], total: number) => {
+  return shuffleCards(cards).slice(0, total);
+}
+
+const shuffleCards = (cards: CardType[]) => {
   return cards.map(value => ({ value, sort: Math.random() }))
               .sort((a, b) => a.sort - b.sort)
               .map(({ value }) => value)
-              .slice(0, total);  
 }
 
-export { shuffleCards };
+export { shuffleCards, shuffleCardsWithSlice };

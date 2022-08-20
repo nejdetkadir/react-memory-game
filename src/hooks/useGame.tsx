@@ -1,7 +1,7 @@
 import React, { useState, useContext, createContext, useEffect } from 'react';
 import { GameStateEnum, CardType } from './../types';
 import { cards } from "./../data"
-import { shuffleCards } from './../utils';
+import { shuffleCards, shuffleCardsWithSlice } from './../utils';
 
 type GameProviderType = {
   children: React.ReactNode;
@@ -17,15 +17,16 @@ type UseGameType = {
   setGameSettings: (gameSettings: GameSettingsType) => void;
   touchCard: (card: CardType) => void;
   matchedCards: CardType[];
+  gameCards: CardType[];
 }
 
 type GameSettingsType = {
-  vertialCardCount: number;
+  verticalCardCount: number;
   horizontalCardCount: number;
 }
 
 const GameContext = createContext({} as UseGameType);
-const initialGameSettings = { vertialCardCount: 4, horizontalCardCount: 4 };
+const initialGameSettings = { verticalCardCount: 8, horizontalCardCount: 8 } as GameSettingsType;
 const initialGameState = GameStateEnum.NOT_STARTED;
 const initialGameScore = 0;
 const defaultSuccessScore = 10;
@@ -41,7 +42,7 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
   const [gameCards, setGameCards] = useState<CardType[]>([]);
 
   useEffect(() => {
-    if (matchedCards.length === gameCards.length) {
+    if (matchedCards.length === gameCards.length && gameCards.length > 0) {
       setGameState(GameStateEnum.FINISHED);
       setGameScore(initialGameScore);
       setTouchedCards([]);
@@ -51,8 +52,9 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
 
   const startGame = () => {
     setGameState(GameStateEnum.PLAYING);
-    const totalCards = gameSettings.vertialCardCount + gameSettings.horizontalCardCount;
-    const shuffledCards = shuffleCards(cards, totalCards);
+    const totalCards = (gameSettings.verticalCardCount * gameSettings.horizontalCardCount) / 2;
+    let shuffledCards = shuffleCardsWithSlice(cards, totalCards);
+    shuffledCards = shuffleCards([...shuffledCards, ...shuffledCards]);
     setGameCards(shuffledCards);
   }
 
@@ -103,6 +105,7 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
     setGameSettings,
     touchCard,
     matchedCards,
+    gameCards
   }
 
   return (
