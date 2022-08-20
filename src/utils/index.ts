@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { CardType } from './../types';
 
 const shuffleCardsWithSlice = (cards: CardType[], total: number) => {
@@ -10,4 +11,12 @@ const shuffleCards = (cards: CardType[]) => {
               .map(({ value }) => value)
 }
 
-export { shuffleCards, shuffleCardsWithSlice };
+const addRandomIdToCards = (cards: CardType[]) => {
+  return cards.map(card => ({ ...card, id: nanoid() }))
+}
+
+export {
+  shuffleCards,
+  shuffleCardsWithSlice,
+  addRandomIdToCards
+};

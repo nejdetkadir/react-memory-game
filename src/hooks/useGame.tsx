@@ -1,14 +1,15 @@
 import React, { useState, useContext, createContext, useEffect } from 'react';
 import { GameStateEnum, CardType } from './../types';
 import { cards } from "./../data";
-import { shuffleCards, shuffleCardsWithSlice } from './../utils';
+import { shuffleCards, shuffleCardsWithSlice, addRandomIdToCards } from './../utils';
 import {
   GAME_SETTINGS,
   GAME_STATE,
   GAME_SCORE,
   TOUCHED_CARDS,
   MATCHED_CARDS,
-  GAME_CARDS
+  GAME_CARDS,
+  GAME_CONTEXT
 } from "./../constants";
 
 type GameProviderType = {
@@ -26,6 +27,7 @@ type UseGameType = {
   touchCard: (card: CardType) => void;
   matchedCards: CardType[];
   gameCards: CardType[];
+  touchedCards: CardType[];
 }
 
 type GameSettingsType = {
@@ -42,22 +44,31 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
   const [touchedCards, setTouchedCards] = useState<CardType[]>(TOUCHED_CARDS.INITIAL);
   const [matchedCards, setMatchedCards] = useState<CardType[]>(MATCHED_CARDS.INITIAL);
   const [gameCards, setGameCards] = useState<CardType[]>(GAME_CARDS.INITIAL);
+  const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
   useEffect(() => {
     if (matchedCards.length === gameCards.length && gameCards.length > 0) {
-      setGameState(GameStateEnum.FINISHED);
-      setGameScore(GAME_SCORE.INITIAL);
-      setTouchedCards([]);
-      setMatchedCards([]);
+      setTimeout(() => {
+        setGameState(GameStateEnum.FINISHED);
+        setGameScore(GAME_SCORE.INITIAL);
+        setTouchedCards([]);
+        setMatchedCards([]);
+      }, GAME_CONTEXT.FINISHED_TRIGGER_TIMEOUT);
     }
   }, [matchedCards])
 
   const startGame = () => {
     setGameState(GameStateEnum.PLAYING);
+    const shuffledCards = prepareGameCards();
+    setGameCards(shuffledCards);
+  }
+
+  const prepareGameCards = () => {
     const totalCards = (gameSettings.verticalCardsCount * gameSettings.horizontalCardsCount) / 2;
     let shuffledCards = shuffleCardsWithSlice(cards, totalCards);
     shuffledCards = shuffleCards([...shuffledCards, ...shuffledCards]);
-    setGameCards(shuffledCards);
+    shuffledCards = addRandomIdToCards(shuffledCards);
+    return shuffledCards;
   }
 
   const finishGame = () => {
@@ -67,25 +78,35 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
   const restartGame = () => startGame();
 
   const touchCard = (card: CardType) => {
-    if (touchedCards.length < 2) {
+    if (isBlocked) return;
+
+    if (touchedCards.length === 0) {
+      setTouchedCards([...touchedCards, card]);
+    } else {
+      if (touchedCards[0].id === card.id) return;
+
       setTouchedCards([...touchedCards, card]);
 
-      if (touchedCards.length === 2 && touchedCards[0].name === card.name) {
+      if (touchedCards[0].name === card.name) {
         addScore();
-        setMatchedCards(touchedCards);
+        addNewMatch(card);
         clearTouchedCards();
       } else {
         subtractScore();
         clearTouchedCards();
       }
-    } else {
-      clearTouchedCards();
     }
   }
 
+  const addNewMatch = (card: CardType) => {
+    setMatchedCards([...touchedCards, card, ...matchedCards]);
+  }
+
   const clearTouchedCards = () => {
+    setIsBlocked(true);
     setTimeout(() => {
       setTouchedCards([]);
+      setIsBlocked(false);
     }, TOUCHED_CARDS.CLEAR_TIMEOUT);
   }
 
@@ -106,6 +127,7 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
     gameSettings,
     setGameSettings,
     touchCard,
+    touchedCards,
     matchedCards,
     gameCards
   }

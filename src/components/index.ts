@@ -4,6 +4,7 @@ import PlayingState from "./GameStates/Playing";
 import NotStartedState from "./GameStates/NotStarted";
 import FinishedState from "./GameStates/Finished";
 import GameSettings from "./GameSettings";
+import GameScore from "./GameScore";
 
 export {
   GameArea,
@@ -11,5 +12,6 @@ export {
   PlayingState,
   NotStartedState,
   FinishedState,
-  GameSettings
+  GameSettings,
+  GameScore
 };

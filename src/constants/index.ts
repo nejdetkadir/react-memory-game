@@ -1,13 +1,13 @@
 import { GameStateEnum } from './../types';
 
 const GAME_SETTINGS = Object.freeze({
-  MINIMUM_HORIZONTAL_CARDS_COUNT: 8,
-  MAXIMUM_HORIZONTAL_CARDS_COUNT: 32,
-  MINIMUM_VERTICAL_CARDS_COUNT: 8,
-  MAXIMUM_VERTICAL_CARDS_COUNT: 32,
+  MINIMUM_HORIZONTAL_CARDS_COUNT: 4,
+  MAXIMUM_HORIZONTAL_CARDS_COUNT: 20,
+  MINIMUM_VERTICAL_CARDS_COUNT: 4,
+  MAXIMUM_VERTICAL_CARDS_COUNT: 20,
   INITIAL: {
-    verticalCardsCount: 8,
-    horizontalCardsCount: 8,
+    verticalCardsCount: 4,
+    horizontalCardsCount: 4,
   }
 });
 
@@ -34,11 +34,16 @@ const GAME_CARDS = Object.freeze({
   INITIAL: [],
 });
 
+const GAME_CONTEXT = Object.freeze({
+  FINISHED_TRIGGER_TIMEOUT: 800,
+});
+
 export {
   GAME_SETTINGS,
   GAME_STATE,
   GAME_SCORE,
   TOUCHED_CARDS,
   MATCHED_CARDS,
-  GAME_CARDS
+  GAME_CARDS,
+  GAME_CONTEXT
 };
