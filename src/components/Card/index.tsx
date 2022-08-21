@@ -11,16 +11,17 @@ type Props = {
 }
 
 const Card: React.FC<Props> = ({ id, name, image }) => {
-  const { touchCard, matchedCards, touchedCards, doesNotMatchedCards } = useGame();
+  const { touchCard, matchedCards, touchedCards, doesNotMatchedCards, gameIsStarted } = useGame();
   const [initialClass, setInitialClass] = useState<string>(GAME_CARD_COMPONENT.INITAL_CLASS);
   const isMatched = matchedCards.find(card => card.id === id);
   const isTouched = touchedCards.find(card => card.id === id);
 
   const onClickCard = () => {
+    if (isMatched || isTouched || gameIsStarted) return;
     touchCard({ id, name, image } as CardType);
   }
 
-  const cardImage = isTouched || isMatched ? image : GAME_CARD_COMPONENT.PLACEHOLDER_IMAGE;
+  const cardImage = isTouched || isMatched || gameIsStarted ? image : GAME_CARD_COMPONENT.PLACEHOLDER_IMAGE;
   const isMatchedClass = isMatched ? GAME_CARD_COMPONENT.IS_MATCHED_CLASS : '';
   const isTouchedClass = isTouched ? GAME_CARD_COMPONENT.IS_TOUCHED_CLASS : '';
 

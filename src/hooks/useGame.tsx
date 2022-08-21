@@ -11,7 +11,8 @@ import {
   GAME_CARDS,
   GAME_CONTEXT,
   DOES_NOT_MATCHED_CARDS,
-  IS_BLOCKED
+  IS_BLOCKED,
+  GAME_IS_STARTED
 } from "./../constants";
 import useSounds from './useSounds';
 
@@ -32,6 +33,7 @@ type UseGameType = {
   gameCards: CardType[];
   touchedCards: CardType[];
   doesNotMatchedCards: CardType[];
+  gameIsStarted: boolean;
 }
 
 type GameSettingsType = {
@@ -50,6 +52,8 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
   const [gameCards, setGameCards] = useState<CardType[]>(GAME_CARDS.INITIAL);
   const [isBlocked, setIsBlocked] = useState<boolean>(IS_BLOCKED.INITIAL);
   const [doesNotMatchedCards, setDoesNotMatchedCards] = useState<CardType[]>(DOES_NOT_MATCHED_CARDS.INITIAL);
+  const [gameIsStarted, setGameIsStarted] = useState<boolean>(GAME_IS_STARTED.INITIAL);
+
   const {
     playFailureSound,
     failureAudio,
@@ -70,6 +74,14 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
       setGameScore(GAME_SCORE.INITIAL);
       setTouchedCards(TOUCHED_CARDS.INITIAL);
       setMatchedCards(MATCHED_CARDS.INITIAL);
+    }
+
+    if (gameState == GameStateEnum.PLAYING) {
+      setGameIsStarted(GAME_IS_STARTED.STARTED);
+
+      setTimeout(() => {
+        setGameIsStarted(GAME_IS_STARTED.PLAYING);
+      }, GAME_IS_STARTED.BLOCKED_TIMEOUT);
     }
   }, [gameState])
 
@@ -153,6 +165,7 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
     matchedCards,
     gameCards,
     doesNotMatchedCards,
+    gameIsStarted
   }
 
   return (

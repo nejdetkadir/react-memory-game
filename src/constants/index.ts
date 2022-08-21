@@ -63,6 +63,13 @@ const IS_BLOCKED = Object.freeze({
   UNBLOCK: false,
 });
 
+const GAME_IS_STARTED = Object.freeze({
+  INITIAL: false,
+  STARTED: true,
+  PLAYING: false,
+  BLOCKED_TIMEOUT: 1000,
+});
+
 export {
   GAME_SETTINGS,
   GAME_STATE,
@@ -74,5 +81,6 @@ export {
   GAME_CARD_COMPONENT,
   LAYOUT,
   DOES_NOT_MATCHED_CARDS,
-  IS_BLOCKED
+  IS_BLOCKED,
+  GAME_IS_STARTED
 };
