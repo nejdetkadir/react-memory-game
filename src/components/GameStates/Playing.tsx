@@ -5,7 +5,7 @@ import { Card, GameScore } from "./../index";
 type Props = {}
 
 const Playing: React.FC<Props> = () => {
-  const { gameCards, gameSettings, gameScore } = useGame();
+  const { gameCards, gameSettings } = useGame();
 
   const styles = {
     gridTemplateColumns: `repeat(${gameSettings.horizontalCardsCount}, 1fr)`,

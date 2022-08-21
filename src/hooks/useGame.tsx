@@ -54,12 +54,17 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
     if (matchedCards.length === gameCards.length && gameCards.length > 0) {
       setTimeout(() => {
         setGameState(GameStateEnum.FINISHED);
-        setGameScore(GAME_SCORE.INITIAL);
-        setTouchedCards(TOUCHED_CARDS.INITIAL);
-        setMatchedCards(MATCHED_CARDS.INITIAL);
       }, GAME_CONTEXT.FINISHED_TRIGGER_TIMEOUT);
     }
   }, [matchedCards])
+
+  useEffect(() => {
+    if (gameState == GameStateEnum.NOT_STARTED) {
+      setGameScore(GAME_SCORE.INITIAL);
+      setTouchedCards(TOUCHED_CARDS.INITIAL);
+      setMatchedCards(MATCHED_CARDS.INITIAL);
+    }
+  }, [gameState])
 
   const startGame = () => {
     setGameState(GameStateEnum.PLAYING);
@@ -79,7 +84,9 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
     setGameState(GameStateEnum.FINISHED);
   }
 
-  const restartGame = () => startGame();
+  const restartGame = () => {
+    setGameState(GameStateEnum.NOT_STARTED);
+  }
 
   const touchCard = (card: CardType) => {
     if (isBlocked) return;
