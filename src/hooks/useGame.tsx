@@ -13,6 +13,7 @@ import {
   DOES_NOT_MATCHED_CARDS,
   IS_BLOCKED
 } from "./../constants";
+import useSounds from './useSounds';
 
 type GameProviderType = {
   children: React.ReactNode;
@@ -49,6 +50,12 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
   const [gameCards, setGameCards] = useState<CardType[]>(GAME_CARDS.INITIAL);
   const [isBlocked, setIsBlocked] = useState<boolean>(IS_BLOCKED.INITIAL);
   const [doesNotMatchedCards, setDoesNotMatchedCards] = useState<CardType[]>(DOES_NOT_MATCHED_CARDS.INITIAL);
+  const {
+    playFailureSound,
+    failureAudio,
+    playSuccessSound,
+    successAudio,
+  } = useSounds();
 
   useEffect(() => {
     if (matchedCards.length === gameCards.length && gameCards.length > 0) {
@@ -102,10 +109,12 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
         addScore();
         addNewMatch(card);
         clearTouchedCards();
+        playSuccessSound();
       } else {
         setDoesNotMatchedCards([...touchedCards, card]);
         subtractScore();
         clearTouchedCards();
+        playFailureSound();
       }
     }
   }
@@ -148,6 +157,8 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
 
   return (
     <GameContext.Provider value={contextValue}>
+      { failureAudio }
+      { successAudio }
       {children}
     </GameContext.Provider>
   )
