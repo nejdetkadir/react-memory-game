@@ -41,7 +41,6 @@ const GameSettings: React.FC<Props> = () => {
     setGameSettings(newGameSettings);
   }, [watchHorizontalCardsCount, watchVerticalCardsCount])
 
-
   return (
     <div className='grid grid-cols-1 gap-6'>
       <div>
@@ -52,7 +51,8 @@ const GameSettings: React.FC<Props> = () => {
           type="range"
           min={GAME_SETTINGS.MINIMUM_HORIZONTAL_CARDS_COUNT}
           max={GAME_SETTINGS.MAXIMUM_HORIZONTAL_CARDS_COUNT}
-        />      </div>
+        />
+      </div>
 
       <div>
         <label>Vertical cards count {gameSettings.verticalCardsCount}</label>

@@ -9,7 +9,9 @@ import {
   TOUCHED_CARDS,
   MATCHED_CARDS,
   GAME_CARDS,
-  GAME_CONTEXT
+  GAME_CONTEXT,
+  DOES_NOT_MATCHED_CARDS,
+  IS_BLOCKED
 } from "./../constants";
 
 type GameProviderType = {
@@ -28,6 +30,7 @@ type UseGameType = {
   matchedCards: CardType[];
   gameCards: CardType[];
   touchedCards: CardType[];
+  doesNotMatchedCards: CardType[];
 }
 
 type GameSettingsType = {
@@ -44,15 +47,16 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
   const [touchedCards, setTouchedCards] = useState<CardType[]>(TOUCHED_CARDS.INITIAL);
   const [matchedCards, setMatchedCards] = useState<CardType[]>(MATCHED_CARDS.INITIAL);
   const [gameCards, setGameCards] = useState<CardType[]>(GAME_CARDS.INITIAL);
-  const [isBlocked, setIsBlocked] = useState<boolean>(false);
+  const [isBlocked, setIsBlocked] = useState<boolean>(IS_BLOCKED.INITIAL);
+  const [doesNotMatchedCards, setDoesNotMatchedCards] = useState<CardType[]>(DOES_NOT_MATCHED_CARDS.INITIAL);
 
   useEffect(() => {
     if (matchedCards.length === gameCards.length && gameCards.length > 0) {
       setTimeout(() => {
         setGameState(GameStateEnum.FINISHED);
         setGameScore(GAME_SCORE.INITIAL);
-        setTouchedCards([]);
-        setMatchedCards([]);
+        setTouchedCards(TOUCHED_CARDS.INITIAL);
+        setMatchedCards(MATCHED_CARDS.INITIAL);
       }, GAME_CONTEXT.FINISHED_TRIGGER_TIMEOUT);
     }
   }, [matchedCards])
@@ -92,6 +96,7 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
         addNewMatch(card);
         clearTouchedCards();
       } else {
+        setDoesNotMatchedCards([...touchedCards, card]);
         subtractScore();
         clearTouchedCards();
       }
@@ -103,10 +108,11 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
   }
 
   const clearTouchedCards = () => {
-    setIsBlocked(true);
+    setIsBlocked(IS_BLOCKED.BLOCK);
     setTimeout(() => {
-      setTouchedCards([]);
-      setIsBlocked(false);
+      setTouchedCards(TOUCHED_CARDS.INITIAL);
+      setIsBlocked(IS_BLOCKED.UNBLOCK);
+      setDoesNotMatchedCards(DOES_NOT_MATCHED_CARDS.INITIAL);
     }, TOUCHED_CARDS.CLEAR_TIMEOUT);
   }
 
@@ -129,7 +135,8 @@ export const GameProvider: React.FC<GameProviderType> = ({ children }) => {
     touchCard,
     touchedCards,
     matchedCards,
-    gameCards
+    gameCards,
+    doesNotMatchedCards,
   }
 
   return (

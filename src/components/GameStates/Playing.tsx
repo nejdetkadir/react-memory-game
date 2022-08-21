@@ -16,7 +16,7 @@ const Playing: React.FC<Props> = () => {
     <div style={styles} className="grid gap-y-4 gap-x-2">
       <GameScore /> 
       {
-        gameCards.map((card, index) => <Card key={index} id={card.id} name={card.name} image={card.image} />)
+        gameCards.map((card, index) => <Card key={index} id={card.id} name={card.name} image={card.image} index={index} />)
       }
     </div>
   )
